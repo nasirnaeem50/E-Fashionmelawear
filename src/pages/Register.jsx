@@ -1,8 +1,10 @@
 // src/pages/Register.jsx
+
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import PageTransition from '../components/shared/PageTransition';
+import { FaArrowLeft } from 'react-icons/fa'; // <-- Import the icon
 
 const Register = () => {
     const [name, setName] = useState('');
@@ -12,7 +14,6 @@ const Register = () => {
     const { register } = useAuth();
     const navigate = useNavigate();
 
-    // --- MODIFIED HANDLESUBMIT FUNCTION ---
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
@@ -23,22 +24,25 @@ const Register = () => {
         try {
             const success = await register(name, email, password);
             if (success) {
-                // On successful registration, navigate to the login page
-                // and pass a message in the state.
                 navigate('/login', { state: { message: 'Registration successful! Please log in.' } });
-            } else {
-                setError('Failed to create an account. Please try again.');
             }
         } catch (err) {
-            setError('An unexpected error occurred.');
+            setError(err.message);
         }
     };
-    // --- END OF MODIFICATION ---
 
     return (
         <PageTransition>
             <div className="flex items-center justify-center min-h-screen bg-gray-50">
                 <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
+
+                    {/* --- ADDED THIS "BACK TO HOME" LINK FOR CONSISTENCY --- */}
+                    <Link to="/" className="flex items-center text-sm text-gray-600 hover:text-red-500 transition-colors mb-8">
+                        <FaArrowLeft className="mr-2" />
+                        Back to Home
+                    </Link>
+                    {/* --- END OF ADDED LINK --- */}
+
                     <h2 className="text-3xl font-bold text-center text-gray-800">Create an Account</h2>
                     <form onSubmit={handleSubmit} className="space-y-6">
                         {error && <p className="p-3 text-sm text-center text-red-800 bg-red-100 rounded-md">{error}</p>}

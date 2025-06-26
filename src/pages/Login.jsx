@@ -1,7 +1,10 @@
+// src/pages/Login.jsx
+
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import PageTransition from '../components/shared/PageTransition';
+import { FaArrowLeft } from 'react-icons/fa'; // <-- Import the icon
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -18,12 +21,10 @@ const Login = () => {
         try {
             const success = await login(email, password);
             if (success) {
-                navigate('/'); // Changed from '/shop' to '/'
-            } else {
-                setError('Failed to log in. Please check your credentials.');
+                navigate('/');
             }
         } catch (err) {
-            setError('An unexpected error occurred.');
+            setError(err.message);
         }
     };
 
@@ -31,6 +32,14 @@ const Login = () => {
         <PageTransition>
             <div className="flex items-center justify-center min-h-screen bg-gray-50">
                 <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
+                    
+                    {/* --- ADDED THIS "BACK TO HOME" LINK --- */}
+                    <Link to="/" className="flex items-center text-sm text-gray-600 hover:text-red-500 transition-colors mb-8">
+                        <FaArrowLeft className="mr-2" />
+                        Back to Home
+                    </Link>
+                    {/* --- END OF ADDED LINK --- */}
+
                     <h2 className="text-3xl font-bold text-center text-gray-800">Login to Your Account</h2>
                     <form onSubmit={handleSubmit} className="space-y-6">
                         {successMessage && (

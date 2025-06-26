@@ -65,10 +65,9 @@ const Header = () => {
       setIsMenuOpen(false);
   }
 
-  // --- CHANGED: Added navigation on logout ---
   const handleLogout = () => {
       logout();
-      navigate('/'); // Navigate to the home page after logout
+      navigate('/'); 
       setIsMenuOpen(false);
   }
 
@@ -104,11 +103,20 @@ const Header = () => {
             </form>
           </div>
           
-          {/* --- CHANGED: Increased gap between icons (space-x-4 md:space-x-6) --- */}
           <div className="flex items-center space-x-4 md:space-x-6">
+            {/* === CHANGED: Added Wishlist Icon to Mobile View === */}
             <div className="flex items-center space-x-3 lg:hidden">
-              <Link to="/profile/compare" className="text-gray-600 hover:text-red-500 relative"><FaBalanceScale size={22} /></Link>
-              <Link to={user ? "/profile" : "/login"} className="text-gray-600"><FiUser size={24} /></Link>
+              <Link to="/profile/compare" className="text-gray-600 hover:text-red-500 relative">
+                <FaBalanceScale size={22} />
+                <span className="absolute -top-1.5 -right-2 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">{getCompareCount()}</span>
+              </Link>
+              <Link to="/profile/wishlist" className="text-gray-600 hover:text-red-500 relative">
+                <FiHeart size={22} />
+                <span className="absolute -top-1.5 -right-2 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">{getWishlistCount()}</span>
+              </Link>
+              <Link to={user ? "/profile" : "/login"} className="text-gray-600">
+                <FiUser size={24} />
+              </Link>
             </div>
             
             {user ? (
@@ -123,7 +131,6 @@ const Header = () => {
                   {isAdmin && (
                     <Link to="/admin" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Admin Dashboard</Link>
                   )}
-                  {/* --- CHANGED: Using handleLogout for consistent behavior --- */}
                   <button onClick={handleLogout} className="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Logout</button>
                 </div>
               </div>
@@ -178,9 +185,9 @@ const Header = () => {
                 </div>
                 <div className="flex items-center space-x-6 font-medium text-sm">
                     <NavLink to="/" style={({ isActive }) => (isActive ? activeLinkStyle : undefined)} className="hover:text-red-500">Home</NavLink>
-                    <NavLink to="/about" style={({ isActive }) => (isActive ? activeLinkStyle : undefined)} className="hover:text-red-500">About us</NavLink>
+                    <NavLink to="/about" style={({ isActive }) => (isActive ? activeLinkStyle : undefined)} className="hover:text-red-500">About Us</NavLink>
                     <NavLink to="/shop" style={({ isActive }) => (isActive ? activeLinkStyle : undefined)} className="hover:text-red-500">Shop</NavLink>
-                    <NavLink to="/contact" style={({ isActive }) => (isActive ? activeLinkStyle : undefined)} className="hover:text-red-500">Contact us</NavLink>
+                    <NavLink to="/contact" style={({ isActive }) => (isActive ? activeLinkStyle : undefined)} className="hover:text-red-500">Contact Us</NavLink>
                 </div>
            </div>
           <div className="flex items-center space-x-6">

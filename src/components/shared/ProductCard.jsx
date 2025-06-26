@@ -1,4 +1,3 @@
-// src/components/shared/ProductCard.jsx
 import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { FaStar } from 'react-icons/fa';
@@ -45,8 +44,8 @@ const ProductCard = ({ product }) => {
 
     return (
         <>
-            <div className="group bg-white rounded-lg shadow-sm overflow-hidden relative hover:shadow-md transition-shadow duration-300 h-full flex flex-col">
-                {/* Discount Badge - Only shown for special offers */}
+            <div className="group bg-white rounded-lg shadow-sm overflow-hidden relative hover:shadow-md transition-shadow duration-300 h-full flex flex-col border border-gray-100">
+                {/* Discount Badge */}
                 {isSpecialOffer && (
                     <div className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-md z-10">
                         {discountPercentage}% OFF
@@ -54,13 +53,17 @@ const ProductCard = ({ product }) => {
                 )}
 
                 {/* Image Container */}
-                <div className="relative overflow-hidden bg-gray-50 flex-grow">
+                <div className="relative overflow-hidden bg-white flex-grow">
                     <Link to={`/product/${product.id}`}>
                         <div className="relative h-0 pt-[100%] sm:pt-[125%]">
                             <img 
                                 src={product.image} 
                                 alt={product.name} 
                                 className="absolute top-0 left-0 w-full h-full object-contain p-4 transition-transform duration-300 ease-in-out group-hover:scale-105" 
+                                onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = '/images/placeholder.jpg';
+                                }}
                             />
                         </div>
                     </Link>
@@ -74,9 +77,9 @@ const ProductCard = ({ product }) => {
                 </div>
 
                 {/* Text Content */}
-                <div className="p-4 text-left">
+                <div className="p-4 text-left border-t border-gray-100">
                     <h3 className="text-md font-semibold text-gray-800 truncate mb-1">
-                        <Link to={`/product/${product.id}`} className="hover:text-red-500">{product.name}</Link>
+                        <Link to={`/product/${product.id}`} className="hover:text-red-500 transition-colors">{product.name}</Link>
                     </h3>
                     <div className="flex items-center text-sm mb-2">
                         {[...Array(5)].map((_, i) => (
@@ -111,13 +114,13 @@ const ProductCard = ({ product }) => {
                         </button>
                         <button 
                             onClick={(e) => handleIconClick(e, 'Wishlist')} 
-                            className={`p-2 border rounded-md transition-colors ${isInWishlist ? 'bg-red-500 text-white border-red-500' : 'text-gray-600 hover:bg-gray-100'}`}
+                            className={`p-2 border rounded-md transition-colors ${isInWishlist ? 'bg-red-500 text-white border-red-500' : 'text-gray-600 hover:bg-gray-100 border-gray-200'}`}
                         >
                             <FiHeart size={16} />
                         </button>
                         <button 
                             onClick={(e) => handleIconClick(e, 'Compare')} 
-                            className={`p-2 border rounded-md transition-colors ${isInCompare ? 'bg-red-500 text-white border-red-500' : 'text-gray-600 hover:bg-gray-100'}`}
+                            className={`p-2 border rounded-md transition-colors ${isInCompare ? 'bg-red-500 text-white border-red-500' : 'text-gray-600 hover:bg-gray-100 border-gray-200'}`}
                         >
                             <FaBalanceScale size={16} />
                         </button>

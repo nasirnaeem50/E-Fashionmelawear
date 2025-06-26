@@ -1,6 +1,7 @@
 // src/components/home/Hero.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { FiChevronRight } from 'react-icons/fi'; // Import an icon for the hover effect
 
 const heroCategories = [
     { name: 'Lawn Collection', link: '/shop?category=Lawn+Collection' },
@@ -26,11 +27,15 @@ const Hero = () => {
                         <ul className="divide-y divide-gray-200">
                             {heroCategories.map((category, index) => (
                                 <li key={index}>
+                                    {/* === UPDATED: Added bold font and hover effect === */}
                                     <Link 
                                         to={category.link} 
-                                        className="block px-4 py-3 text-gray-700 hover:bg-gray-100 transition-colors duration-200"
+                                        className="group flex items-center justify-between px-4 py-3 text-gray-800 transition-all duration-300 ease-in-out hover:bg-red-600 hover:text-white hover:pl-6"
                                     >
-                                        <span className="text-sm">{category.name}</span>
+                                        <span className="text-sm font-bold">{category.name}</span>
+                                        <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                            <FiChevronRight size={16} />
+                                        </span>
                                     </Link>
                                 </li>
                             ))}

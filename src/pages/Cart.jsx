@@ -1,3 +1,5 @@
+// src/pages/Cart.jsx
+
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { CartContext } from '../context/CartContext';
@@ -7,31 +9,23 @@ import { specialOffers } from '../data/mockData';
 import { useState } from 'react';
 
 const Cart = () => {
-    const { cartItems, addToCart, removeFromCart, getCartTotal, clearCart } = useContext(CartContext);
-    const [isRemoving, setIsRemoving] = useState(false);
+    // Make sure to get the new decreaseQuantity function from context
+    const { cartItems, addToCart, decreaseQuantity, removeFromCart, getCartTotal, clearCart } = useContext(CartContext);
+    const [isRemoving, setIsRemoving] = useState(null); // State to handle animation per item
 
-    // Check if product is a special offer
-    const isSpecialOffer = (productId) => {
-        return specialOffers.some(offer => offer.id === productId);
-    };
+    const isSpecialOffer = (productId) => specialOffers.some(offer => offer.id === productId);
 
-    // Get discount information
     const getDiscountInfo = (productId) => {
         const offer = specialOffers.find(offer => offer.id === productId);
-        if (offer) {
-            return {
-                percentage: Math.round(((offer.originalPrice - offer.price) / offer.originalPrice) * 100),
-                originalPrice: offer.originalPrice
-            };
-        }
-        return null;
+        return offer ? {
+            percentage: Math.round(((offer.originalPrice - offer.price) / offer.originalPrice) * 100),
+            originalPrice: offer.originalPrice
+        } : null;
     };
 
-    // Calculate pricing information
     const pricingInfo = cartItems.reduce((acc, item) => {
         const discountInfo = isSpecialOffer(item.id) ? getDiscountInfo(item.id) : null;
         const originalPrice = discountInfo?.originalPrice || item.price;
-        
         return {
             originalSubtotal: acc.originalSubtotal + (originalPrice * item.quantity),
             discountAmount: acc.discountAmount + (discountInfo ? (originalPrice - item.price) * item.quantity : 0),
@@ -39,13 +33,17 @@ const Cart = () => {
         };
     }, { originalSubtotal: 0, discountAmount: 0, itemCount: 0 });
 
+    // Updated handleRemoveItem to target a specific item for animation
     const handleRemoveItem = (item) => {
-        setIsRemoving(true);
+        setIsRemoving(item.id);
         setTimeout(() => {
-            removeFromCart({ ...item, quantity: item.quantity });
-            setIsRemoving(false);
-        }, 300);
+            removeFromCart(item);
+            setIsRemoving(null);
+        }, 300); // Animation duration
     };
+    
+    // ... (rest of the component is the same, starting from the empty cart check)
+
 
     if (cartItems.length === 0) {
         return (
@@ -85,7 +83,6 @@ const Cart = () => {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Cart Items */}
                     <div className="lg:col-span-2 space-y-4">
                         {cartItems.map(item => {
                             const discountInfo = isSpecialOffer(item.id) ? getDiscountInfo(item.id) : null;
@@ -93,15 +90,11 @@ const Cart = () => {
                             return (
                                 <div 
                                     key={item.id} 
-                                    className={`flex flex-col sm:flex-row items-center justify-between bg-white p-5 rounded-xl shadow-sm border border-gray-100 transition-all duration-300 ${isRemoving ? 'opacity-75' : 'hover:shadow-md'}`}
+                                    className={`flex flex-col sm:flex-row items-center justify-between bg-white p-5 rounded-xl shadow-sm border border-gray-100 transition-all duration-300 ${isRemoving === item.id ? 'opacity-0 scale-95' : 'opacity-100 scale-100'} hover:shadow-md`}
                                 >
                                     <div className="flex items-center gap-4 w-full sm:w-auto mb-4 sm:mb-0">
                                         <div className="relative w-32 h-32 md:w-40 md:h-40 flex items-center justify-center bg-gray-50 rounded-lg overflow-hidden">
-                                            <img 
-                                                src={item.image} 
-                                                alt={item.name} 
-                                                className="max-w-full max-h-full object-contain p-2"
-                                            />
+                                            <img src={item.image} alt={item.name} className="max-w-full max-h-full object-contain p-2" />
                                             {discountInfo && (
                                                 <div className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-md z-10">
                                                     {discountInfo.percentage}% OFF
@@ -113,25 +106,22 @@ const Cart = () => {
                                             <div className="flex items-center gap-2 mt-1">
                                                 <p className="text-gray-600">Rs {item.price.toLocaleString()}</p>
                                                 {discountInfo && (
-                                                    <p className="text-xs text-gray-400 line-through">
-                                                        Rs {discountInfo.originalPrice.toLocaleString()}
-                                                    </p>
+                                                    <p className="text-xs text-gray-400 line-through">Rs {discountInfo.originalPrice.toLocaleString()}</p>
                                                 )}
                                             </div>
                                         </div>
                                     </div>
                                     <div className="flex items-center justify-between w-full sm:w-auto gap-4">
                                         <div className="flex items-center border border-gray-200 rounded-lg">
+                                            {/* THIS IS THE CORRECTED MINUS BUTTON */}
                                             <button 
-                                                onClick={() => removeFromCart(item)} 
+                                                onClick={() => decreaseQuantity(item)} 
                                                 className="p-2 text-gray-500 hover:text-red-500 transition-colors"
                                                 aria-label="Decrease quantity"
                                             >
                                                 <FaMinus size={14}/>
                                             </button>
-                                            <span className="px-4 font-medium text-gray-700 min-w-[40px] text-center">
-                                                {item.quantity}
-                                            </span>
+                                            <span className="px-4 font-medium text-gray-700 min-w-[40px] text-center">{item.quantity}</span>
                                             <button 
                                                 onClick={() => addToCart(item)} 
                                                 className="p-2 text-gray-500 hover:text-green-500 transition-colors"
@@ -140,9 +130,7 @@ const Cart = () => {
                                                 <FaPlus size={14}/>
                                             </button>
                                         </div>
-                                        <p className="font-bold text-gray-800 min-w-[80px] text-right">
-                                            Rs {(item.price * item.quantity).toLocaleString()}
-                                        </p>
+                                        <p className="font-bold text-gray-800 min-w-[80px] text-right">Rs {(item.price * item.quantity).toLocaleString()}</p>
                                         <button 
                                             onClick={() => handleRemoveItem(item)} 
                                             className="text-gray-400 hover:text-red-500 transition-colors p-2"
@@ -156,16 +144,11 @@ const Cart = () => {
                         })}
 
                         <div className="flex justify-between mt-6">
-                            <button 
-                                onClick={clearCart} 
-                                className="text-gray-500 hover:text-red-500 font-medium flex items-center gap-2 transition-colors"
-                            >
-                                <FaTrash size={14}/>
-                                Clear Entire Cart
+                            <button onClick={clearCart} className="text-gray-500 hover:text-red-500 font-medium flex items-center gap-2 transition-colors">
+                                <FaTrash size={14}/> Clear Entire Cart
                             </button>
                         </div>
                     </div>
-
                     {/* Order Summary */}
                     <div className="lg:col-span-1">
                         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 sticky top-6">
@@ -175,24 +158,20 @@ const Cart = () => {
                                     <span>Subtotal ({pricingInfo.itemCount} items)</span>
                                     <span>Rs {pricingInfo.originalSubtotal.toLocaleString()}</span>
                                 </div>
-                                
                                 {pricingInfo.discountAmount > 0 && (
                                     <div className="flex justify-between text-red-500">
                                         <span>Discounts Applied</span>
                                         <span>- Rs {pricingInfo.discountAmount.toLocaleString()}</span>
                                     </div>
                                 )}
-
                                 <div className="flex justify-between">
                                     <span className="text-gray-600">Shipping</span>
                                     <span className="font-semibold text-green-600">Free</span>
                                 </div>
-                                
                                 <div className="flex justify-between pt-3 border-t font-bold text-lg mt-2">
                                     <span className="text-gray-800">Total</span>
                                     <span className="text-gray-800">Rs {getCartTotal().toLocaleString()}</span>
                                 </div>
-                                
                                 {pricingInfo.discountAmount > 0 && (
                                     <div className="flex justify-between text-green-600 font-medium pt-2">
                                         <span>You Saved</span>
@@ -200,15 +179,12 @@ const Cart = () => {
                                     </div>
                                 )}
                             </div>
-                            
                             <Link to="/checkout">
                                 <button className="w-full mt-6 bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-lg transition duration-300 shadow-md hover:shadow-lg flex items-center justify-center">
                                     PROCEED TO CHECKOUT
                                 </button>
                             </Link>
-                            <p className="text-center text-xs text-gray-500 mt-3">
-                                Secure SSL encrypted checkout
-                            </p>
+                            <p className="text-center text-xs text-gray-500 mt-3">Secure SSL encrypted checkout</p>
                         </div>
                     </div>
                 </div>

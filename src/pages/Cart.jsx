@@ -1,5 +1,3 @@
-// src/pages/Cart.jsx
-
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { CartContext } from '../context/CartContext';
@@ -9,9 +7,8 @@ import { specialOffers } from '../data/mockData';
 import { useState } from 'react';
 
 const Cart = () => {
-    // Make sure to get the new decreaseQuantity function from context
     const { cartItems, addToCart, decreaseQuantity, removeFromCart, getCartTotal, clearCart } = useContext(CartContext);
-    const [isRemoving, setIsRemoving] = useState(null); // State to handle animation per item
+    const [isRemoving, setIsRemoving] = useState(null);
 
     const isSpecialOffer = (productId) => specialOffers.some(offer => offer.id === productId);
 
@@ -33,17 +30,13 @@ const Cart = () => {
         };
     }, { originalSubtotal: 0, discountAmount: 0, itemCount: 0 });
 
-    // Updated handleRemoveItem to target a specific item for animation
     const handleRemoveItem = (item) => {
         setIsRemoving(item.id);
         setTimeout(() => {
             removeFromCart(item);
             setIsRemoving(null);
-        }, 300); // Animation duration
+        }, 300);
     };
-    
-    // ... (rest of the component is the same, starting from the empty cart check)
-
 
     if (cartItems.length === 0) {
         return (
@@ -90,54 +83,79 @@ const Cart = () => {
                             return (
                                 <div 
                                     key={item.id} 
-                                    className={`flex flex-col sm:flex-row items-center justify-between bg-white p-5 rounded-xl shadow-sm border border-gray-100 transition-all duration-300 ${isRemoving === item.id ? 'opacity-0 scale-95' : 'opacity-100 scale-100'} hover:shadow-md`}
+                                    className={`group relative bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-300 ${isRemoving === item.id ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}
                                 >
-                                    <div className="flex items-center gap-4 w-full sm:w-auto mb-4 sm:mb-0">
-                                        <div className="relative w-32 h-32 md:w-40 md:h-40 flex items-center justify-center bg-gray-50 rounded-lg overflow-hidden">
-                                            <img src={item.image} alt={item.name} className="max-w-full max-h-full object-contain p-2" />
+                                    <div className="flex flex-col sm:flex-row">
+                                        {/* Product Image */}
+                                        <div className="relative w-full sm:w-48 h-48 flex-shrink-0 bg-gray-100">
+                                            <img 
+                                                src={item.image} 
+                                                alt={item.name} 
+                                                className="w-full h-full object-cover object-top" 
+                                            />
                                             {discountInfo && (
-                                                <div className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-md z-10">
+                                                <div className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full z-10">
                                                     {discountInfo.percentage}% OFF
                                                 </div>
                                             )}
                                         </div>
-                                        <div className="flex-1 sm:flex-none">
-                                            <h3 className="font-semibold text-gray-800">{item.name}</h3>
-                                            <div className="flex items-center gap-2 mt-1">
-                                                <p className="text-gray-600">Rs {item.price.toLocaleString()}</p>
+
+                                        {/* Product Details */}
+                                        <div className="p-4 flex flex-col flex-grow">
+                                            <div className="flex justify-between items-start">
+                                                <div>
+                                                    <h3 className="text-sm font-bold text-gray-900 uppercase line-clamp-2">
+                                                        {item.name}
+                                                    </h3>
+                                                    <p className="text-xs text-gray-500 mt-1">{item.category}</p>
+                                                </div>
+                                            </div>
+
+                                            <div className="mt-2 flex items-baseline gap-2 flex-wrap">
+                                                <div className="flex items-baseline">
+                                                    <span className="text-xs font-medium text-gray-800 mr-0.5">Rs</span>
+                                                    <span className="text-md font-medium text-gray-800">{item.price.toLocaleString()}</span>
+                                                </div>
                                                 {discountInfo && (
-                                                    <p className="text-xs text-gray-400 line-through">Rs {discountInfo.originalPrice.toLocaleString()}</p>
+                                                    <div className="flex items-baseline">
+                                                        <span className="text-xs text-gray-500 line-through mr-0.5">Rs</span>
+                                                        <span className="text-xs text-gray-500 line-through">{discountInfo.originalPrice.toLocaleString()}</span>
+                                                    </div>
+                                                )}
+                                                {discountInfo && (
+                                                    <div className="text-xs font-bold text-white bg-red-500 px-2 py-0.5 rounded-sm">
+                                                        SALE
+                                                    </div>
                                                 )}
                                             </div>
+
+                                            {/* Quantity Controls */}
+                                            <div className="mt-auto pt-4 flex items-center justify-between">
+                                                <div className="flex items-center border border-gray-200 rounded-md">
+                                                    <button 
+                                                        onClick={() => decreaseQuantity(item)} 
+                                                        className="p-3 text-gray-600 hover:bg-gray-50 transition-colors"
+                                                    >
+                                                        <FaMinus size={14}/>
+                                                    </button>
+                                                    <span className="px-4 py-2 font-semibold text-gray-800 w-12 text-center">
+                                                        {item.quantity}
+                                                    </span>
+                                                    <button 
+                                                        onClick={() => addToCart(item)} 
+                                                        className="p-3 text-gray-600 hover:bg-gray-50 transition-colors"
+                                                    >
+                                                        <FaPlus size={14}/>
+                                                    </button>
+                                                </div>
+                                                <button 
+                                                    onClick={() => handleRemoveItem(item)} 
+                                                    className="text-gray-400 hover:text-red-500 transition-colors p-2"
+                                                >
+                                                    <FaTrash size={16}/>
+                                                </button>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="flex items-center justify-between w-full sm:w-auto gap-4">
-                                        <div className="flex items-center border border-gray-200 rounded-lg">
-                                            {/* THIS IS THE CORRECTED MINUS BUTTON */}
-                                            <button 
-                                                onClick={() => decreaseQuantity(item)} 
-                                                className="p-2 text-gray-500 hover:text-red-500 transition-colors"
-                                                aria-label="Decrease quantity"
-                                            >
-                                                <FaMinus size={14}/>
-                                            </button>
-                                            <span className="px-4 font-medium text-gray-700 min-w-[40px] text-center">{item.quantity}</span>
-                                            <button 
-                                                onClick={() => addToCart(item)} 
-                                                className="p-2 text-gray-500 hover:text-green-500 transition-colors"
-                                                aria-label="Increase quantity"
-                                            >
-                                                <FaPlus size={14}/>
-                                            </button>
-                                        </div>
-                                        <p className="font-bold text-gray-800 min-w-[80px] text-right">Rs {(item.price * item.quantity).toLocaleString()}</p>
-                                        <button 
-                                            onClick={() => handleRemoveItem(item)} 
-                                            className="text-gray-400 hover:text-red-500 transition-colors p-2"
-                                            aria-label="Remove item"
-                                        >
-                                            <FaTrash size={16}/>
-                                        </button>
                                     </div>
                                 </div>
                             );
@@ -149,6 +167,7 @@ const Cart = () => {
                             </button>
                         </div>
                     </div>
+
                     {/* Order Summary */}
                     <div className="lg:col-span-1">
                         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 sticky top-6">

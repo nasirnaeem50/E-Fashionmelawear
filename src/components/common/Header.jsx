@@ -1,4 +1,3 @@
-// src/components/common/Header.jsx
 import React, { useContext, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import {
@@ -104,7 +103,6 @@ const Header = () => {
           </div>
           
           <div className="flex items-center space-x-4 md:space-x-6">
-            {/* === CHANGED: Added Wishlist Icon to Mobile View === */}
             <div className="flex items-center space-x-3 lg:hidden">
               <Link to="/profile/compare" className="text-gray-600 hover:text-red-500 relative">
                 <FaBalanceScale size={22} />
@@ -220,6 +218,10 @@ const Header = () => {
                         {user ? (
                              <>
                                 <button onClick={() => handleNavLinkClick('/profile')} className="text-left py-2 px-2 rounded hover:bg-gray-700">My Profile</button>
+                                {/* --- MODIFIED: Added Admin Dashboard link for mobile menu --- */}
+                                {isAdmin && (
+                                    <button onClick={() => handleNavLinkClick('/admin')} className="text-left py-2 px-2 rounded hover:bg-gray-700">Admin Dashboard</button>
+                                )}
                                 <button onClick={handleLogout} className="text-left py-2 px-2 rounded hover:bg-gray-700">Logout</button>
                             </>
                         ) : (

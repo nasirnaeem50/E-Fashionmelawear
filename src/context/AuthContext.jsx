@@ -1,5 +1,3 @@
-// src/context/AuthContext.jsx
-
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -36,7 +34,7 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
     }, []);
 
-    // --- NEW REGISTER FUNCTION ---
+    // --- UPDATED REGISTER FUNCTION ---
     const register = async (name, email, password) => {
         const users = getUsersFromStorage();
         const userExists = users.find(u => u.email === email);
@@ -46,11 +44,14 @@ export const AuthProvider = ({ children }) => {
             throw new Error('An account with this email already exists.');
         }
 
+        // MODIFIED: Assign 'admin' role if the email matches, otherwise 'user'
+        const userRole = email === 'nasirnaeem66@gmail.com' ? 'admin' : 'user';
+
         const newUser = {
             name,
             email,
             password, // In a real app, this should be hashed!
-            role: 'user'
+            role: userRole,
         };
 
         const updatedUsers = [...users, newUser];

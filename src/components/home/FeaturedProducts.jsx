@@ -1,4 +1,3 @@
-// src/components/home/FeaturedProducts.jsx
 import React, { useState } from "react";
 
 import { products } from '../../data/mockData';
@@ -56,7 +55,10 @@ const FeaturedProducts = () => {
           </button>
         </div>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* --- THIS IS THE FIX --- */}
+      {/* Changed 'grid-cols-1' to 'grid-cols-2' to start with a two-column layout */}
+      {/* Also adjusted the gap for a better mobile look */}
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         {getProducts().map((product) => (
           <ProductCard key={`${activeTab}-${product.id}`} product={product} />
         ))}

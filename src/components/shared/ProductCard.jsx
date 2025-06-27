@@ -1,8 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { FaStar } from 'react-icons/fa';
-import { FiHeart, FiSearch } from 'react-icons/fi';
-import { FaBalanceScale } from "react-icons/fa";
+import { FaHeart, FaBalanceScale } from 'react-icons/fa';
+import { FiHeart, FiSearch, FiShoppingBag, FiMoreVertical } from 'react-icons/fi'; // Added More icon
 import { useProductLists } from '../../context/ProductListsContext';
 import { CartContext } from '../../context/CartContext';
 import QuickViewModal from './QuickViewModal';
@@ -12,13 +11,11 @@ const ProductCard = ({ product }) => {
     const { addToCart } = useContext(CartContext);
     const { toggleWishlistItem, toggleCompareItem, wishlistItems, compareItems } = useProductLists();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false); // NEW: State for the mobile menu
 
     const isInWishlist = wishlistItems.some(item => item.id === product.id);
     const isInCompare = compareItems.some(item => item.id === product.id);
-    const isSpecialOffer = specialOffers.some(offer => offer.id === product.id);
-    const discountPercentage = isSpecialOffer 
-        ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
-        : 0;
+    const isNewIn = specialOffers.some(offer => offer.id === product.id);
 
     const handleAddToCart = (e) => {
         e.preventDefault(); 
@@ -27,6 +24,8 @@ const ProductCard = ({ product }) => {
 
     const handleIconClick = (e, action) => {
         e.preventDefault();
+        e.stopPropagation(); // Stop click from propagating to parent elements
+        setIsMenuOpen(false); // Close menu after an action is taken
         switch (action) {
             case 'Search':
                 setIsModalOpen(true);
@@ -41,91 +40,90 @@ const ProductCard = ({ product }) => {
                 break;
         }
     };
+    
+    const formatPrice = (price) => {
+        const integerPart = Math.floor(price);
+        return `Rs ${integerPart.toLocaleString()}.00`;
+    };
 
     return (
         <>
-            <div className="group bg-white rounded-lg shadow-sm overflow-hidden relative hover:shadow-md transition-shadow duration-300 h-full flex flex-col border border-gray-100">
-                {/* Discount Badge */}
-                {isSpecialOffer && (
-                    <div className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-md z-10">
-                        {discountPercentage}% OFF
-                    </div>
-                )}
-
-                {/* Image Container */}
-                <div className="relative overflow-hidden bg-white flex-grow">
+            <div className="group relative h-full flex flex-col">
+                
+                <div className="relative overflow-hidden">
                     <Link to={`/product/${product.id}`}>
-                        <div className="relative h-0 pt-[100%] sm:pt-[125%]">
+                        <div className="aspect-[4/5] w-full bg-gray-100">
                             <img 
                                 src={product.image} 
                                 alt={product.name} 
-                                className="absolute top-0 left-0 w-full h-full object-contain p-4 transition-transform duration-300 ease-in-out group-hover:scale-105" 
-                                onError={(e) => {
-                                    e.target.onerror = null;
-                                    e.target.src = '/images/placeholder.jpg';
-                                }}
+                                className="w-full h-full object-cover object-top transition-transform duration-500 ease-in-out group-hover:scale-105" 
+                                onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder.jpg'; }}
                             />
                         </div>
                     </Link>
-                    
-                    <button 
-                        onClick={(e) => handleIconClick(e, 'Search')} 
-                        className="absolute top-3 right-3 bg-white rounded-full h-10 w-10 flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-red-500 hover:text-white"
-                    >
-                        <FiSearch className="h-5 w-5" />
-                    </button>
-                </div>
 
-                {/* Text Content */}
-                <div className="p-4 text-left border-t border-gray-100">
-                    <h3 className="text-md font-semibold text-gray-800 truncate mb-1">
-                        <Link to={`/product/${product.id}`} className="hover:text-red-500 transition-colors">{product.name}</Link>
-                    </h3>
-                    <div className="flex items-center text-sm mb-2">
-                        {[...Array(5)].map((_, i) => (
-                            <FaStar 
-                                key={i} 
-                                size={14}
-                                className={i < Math.round(product.rating) ? 'text-yellow-400' : 'text-gray-300'} 
-                            />
-                        ))}
-                        <span className="text-gray-400 ml-2 text-xs">({product.reviewCount})</span>
+                    {/* Desktop Hover Icons */}
+                    <div className="hidden lg:flex absolute top-3 right-3 z-20 flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <button onClick={(e) => handleIconClick(e, 'Search')} className="bg-white rounded-full h-9 w-9 flex items-center justify-center shadow-md hover:bg-gray-800 hover:text-white transition-colors">
+                            <FiSearch className="h-5 w-5" />
+                        </button>
+                        <button onClick={(e) => handleIconClick(e, 'Compare')} className={`bg-white rounded-full h-9 w-9 flex items-center justify-center shadow-md hover:bg-gray-800 hover:text-white transition-colors ${isInCompare ? 'bg-gray-800 text-white' : ''}`}>
+                            <FaBalanceScale className="h-5 w-5" />
+                        </button>
                     </div>
-                    <div className="flex items-center gap-2">
-                        <p className="text-lg font-bold text-gray-900">
-                            Rs {product.price.toLocaleString()}
-                        </p>
-                        {isSpecialOffer && (
-                            <p className="text-sm text-gray-500 line-through">
-                                Rs {product.originalPrice.toLocaleString()}
-                            </p>
-                        )}
-                    </div>
-                </div>
-                
-                {/* Action Buttons */}
-                <div className="lg:absolute lg:bottom-0 lg:left-0 lg:right-0 p-3 bg-white lg:transform lg:translate-y-full lg:group-hover:translate-y-0 transition-transform duration-300 ease-in-out z-10 border-t border-gray-200">
-                    <div className="flex items-center gap-2">
-                        <button 
-                            onClick={handleAddToCart} 
-                            className="flex-grow bg-gray-800 text-white font-medium py-2 px-3 rounded-md hover:bg-red-500 transition-colors text-sm whitespace-nowrap"
-                        >
+
+                    {/* Desktop "Add to Cart" Button */}
+                    <div className="hidden lg:block absolute bottom-0 inset-x-0 p-4 z-20 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out">
+                        <button onClick={handleAddToCart} className="w-full bg-black text-white font-bold py-2.5 px-4 rounded-md text-sm hover:bg-red-600 transition-colors duration-200">
                             ADD TO CART
                         </button>
-                        <button 
-                            onClick={(e) => handleIconClick(e, 'Wishlist')} 
-                            className={`p-2 border rounded-md transition-colors ${isInWishlist ? 'bg-red-500 text-white border-red-500' : 'text-gray-600 hover:bg-gray-100 border-gray-200'}`}
-                        >
-                            <FiHeart size={16} />
-                        </button>
-                        <button 
-                            onClick={(e) => handleIconClick(e, 'Compare')} 
-                            className={`p-2 border rounded-md transition-colors ${isInCompare ? 'bg-red-500 text-white border-red-500' : 'text-gray-600 hover:bg-gray-100 border-gray-200'}`}
-                        >
-                            <FaBalanceScale size={16} />
-                        </button>
                     </div>
                 </div>
+
+                {/* --- TEXT CONTAINER --- */}
+                <div className="pt-4 px-1 flex flex-col flex-grow">
+                    <div className="flex justify-between items-start gap-2">
+                        <h3 className="text-sm font-bold text-gray-900 uppercase pr-2">
+                            <Link to={`/product/${product.id}`} className="hover:text-gray-600 transition-colors">{product.name}</Link>
+                        </h3>
+                        {/* --- MOBILE ICONS --- */}
+                        <div className="flex items-center gap-3 lg:hidden">
+                            <button onClick={(e) => handleIconClick(e, 'Wishlist')} className="flex-shrink-0 text-gray-800"><FiHeart size={20} className={`${isInWishlist ? 'text-red-500 fill-current' : ''}`} /></button>
+                            <button onClick={handleAddToCart} className="flex-shrink-0 text-gray-800"><FiShoppingBag size={20} /></button>
+                            {/* NEW: More Options Menu Button */}
+                            <button onClick={(e) => {e.preventDefault(); setIsMenuOpen(!isMenuOpen);}} className="flex-shrink-0 text-gray-800 relative z-30"><FiMoreVertical size={20} /></button>
+                        </div>
+                         {/* --- DESKTOP WISHLIST ICON --- */}
+                        <button onClick={(e) => handleIconClick(e, 'Wishlist')} className="hidden lg:block flex-shrink-0 text-gray-800">
+                            {isInWishlist ? <FaHeart size={20} className="text-red-500" /> : <FiHeart size={20} />}
+                        </button>
+                    </div>
+                    {/* Info Block */}
+                    <div className="flex-grow">
+                        <p className="text-xs text-gray-500 mt-1">{product.category}</p>
+                        <div className="flex items-center gap-2 mt-1.5">
+                            <p className="text-md font-medium text-gray-800">{formatPrice(product.price)}</p>
+                            {isNewIn && ( <div className="text-xs font-bold text-white bg-gray-800 px-2 py-0.5 rounded-sm">NEW IN</div> )}
+                        </div>
+                    </div>
+                </div>
+
+                {/* --- NEW: MOBILE OPTIONS DROPDOWN --- */}
+                {isMenuOpen && (
+                    <>
+                        {/* Backdrop to close menu on outside click */}
+                        <div onClick={() => setIsMenuOpen(false)} className="fixed inset-0 z-20 lg:hidden"></div>
+                        {/* The menu itself */}
+                        <div className="absolute top-12 right-2 bg-white rounded-md shadow-lg border border-gray-100 w-40 z-30 lg:hidden">
+                            <button onClick={(e) => handleIconClick(e, 'Search')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-3">
+                                <FiSearch size={16} /> Quick View
+                            </button>
+                            <button onClick={(e) => handleIconClick(e, 'Compare')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-3">
+                                <FaBalanceScale size={16} /> Compare
+                            </button>
+                        </div>
+                    </>
+                )}
             </div>
 
             {isModalOpen && <QuickViewModal product={product} onClose={() => setIsModalOpen(false)} />}

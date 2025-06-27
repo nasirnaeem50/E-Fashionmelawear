@@ -83,7 +83,7 @@ const ProductCard = ({ product }) => {
                 {/* --- TEXT CONTAINER --- */}
                 <div className="pt-4 px-1 flex flex-col flex-grow">
                     <div className="flex justify-between items-start gap-2">
-                        <h3 className="text-sm font-bold text-gray-900 uppercase pr-2">
+                        <h3 className="text-sm font-bold text-gray-900 uppercase pr-2 line-clamp-2">
                             <Link to={`/product/${product.id}`} className="hover:text-gray-600 transition-colors">{product.name}</Link>
                         </h3>
                         {/* --- MOBILE ICONS --- */}

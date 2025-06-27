@@ -2,7 +2,8 @@ import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { CartContext } from '../context/CartContext';
 import PageTransition from '../components/shared/PageTransition';
-import { FaPlus, FaMinus, FaTrash, FaArrowLeft } from 'react-icons/fa';
+import { FaPlus, FaMinus, FaTrash, FaArrowLeft, FaHeart, FaBalanceScale } from 'react-icons/fa';
+import { FiHeart } from 'react-icons/fi';
 import { specialOffers } from '../data/mockData';
 import { useState } from 'react';
 
@@ -83,28 +84,28 @@ const Cart = () => {
                             return (
                                 <div 
                                     key={item.id} 
-                                    className={`group relative bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-300 ${isRemoving === item.id ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}
+                                    className={`group relative bg-white p-5 rounded-xl shadow-sm border border-gray-100 transition-all duration-300 ${isRemoving === item.id ? 'opacity-0 scale-95' : 'opacity-100 scale-100'} hover:shadow-md`}
                                 >
-                                    <div className="flex flex-col sm:flex-row">
+                                    <div className="flex flex-col sm:flex-row gap-6">
                                         {/* Product Image */}
-                                        <div className="relative w-full sm:w-48 h-48 flex-shrink-0 bg-gray-100">
+                                        <div className="relative w-full sm:w-40 h-40 flex-shrink-0 bg-gray-50 rounded-lg overflow-hidden">
                                             <img 
                                                 src={item.image} 
                                                 alt={item.name} 
-                                                className="w-full h-full object-cover object-top" 
+                                                className="w-full h-full object-contain p-2" 
                                             />
                                             {discountInfo && (
-                                                <div className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full z-10">
+                                                <div className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full z-10">
                                                     {discountInfo.percentage}% OFF
                                                 </div>
                                             )}
                                         </div>
 
                                         {/* Product Details */}
-                                        <div className="p-4 flex flex-col flex-grow">
+                                        <div className="flex-1 flex flex-col">
                                             <div className="flex justify-between items-start">
                                                 <div>
-                                                    <h3 className="text-sm font-bold text-gray-900 uppercase line-clamp-2">
+                                                    <h3 className="text-sm font-bold text-gray-900 uppercase">
                                                         {item.name}
                                                     </h3>
                                                     <p className="text-xs text-gray-500 mt-1">{item.category}</p>
@@ -134,16 +135,16 @@ const Cart = () => {
                                                 <div className="flex items-center border border-gray-200 rounded-md">
                                                     <button 
                                                         onClick={() => decreaseQuantity(item)} 
-                                                        className="p-3 text-gray-600 hover:bg-gray-50 transition-colors"
+                                                        className="p-2 text-gray-600 hover:bg-gray-50 transition-colors"
                                                     >
                                                         <FaMinus size={14}/>
                                                     </button>
-                                                    <span className="px-4 py-2 font-semibold text-gray-800 w-12 text-center">
+                                                    <span className="px-4 py-1 font-semibold text-gray-800 w-12 text-center">
                                                         {item.quantity}
                                                     </span>
                                                     <button 
                                                         onClick={() => addToCart(item)} 
-                                                        className="p-3 text-gray-600 hover:bg-gray-50 transition-colors"
+                                                        className="p-2 text-gray-600 hover:bg-gray-50 transition-colors"
                                                     >
                                                         <FaPlus size={14}/>
                                                     </button>

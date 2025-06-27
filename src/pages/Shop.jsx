@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { products, categories, specialOffers } from '../data/mockData';
 import ProductCard from '../components/shared/ProductCard';
@@ -14,6 +14,7 @@ const Shop = () => {
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [activeFilter, setActiveFilter] = useState(null);
+    const mainContentRef = useRef(null);
 
     useEffect(() => {
         const queryParams = new URLSearchParams(location.search);
@@ -50,7 +51,6 @@ const Shop = () => {
                 specialOfferIds.includes(p.id)
             );
         } else if (activeFilter === 'flash-sale') {
-            // For flash sale, show products with 30% or more discount
             tempProducts = tempProducts.filter(p => 
                 p.originalPrice && 
                 ((p.originalPrice - p.price) / p.originalPrice) >= 0.3
@@ -93,6 +93,13 @@ const Shop = () => {
         }
 
         setFilteredProducts(tempProducts);
+
+        if (mainContentRef.current) {
+            setTimeout(() => {
+                mainContentRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        }
+        
     }, [gender, selectedCategories, sortBy, searchQuery, activeFilter]);
 
     const handleCategoryChange = (e) => {
@@ -101,6 +108,16 @@ const Shop = () => {
             setSelectedCategories([...selectedCategories, category]);
         } else {
             setSelectedCategories(selectedCategories.filter(c => c !== category));
+        }
+        if (window.innerWidth < 1024) {
+            setIsFilterOpen(false);
+        }
+    };
+    
+    const handleGenderChange = (e) => {
+        setGender(e.target.value);
+        if (window.innerWidth < 1024) {
+            setIsFilterOpen(false);
         }
     };
 
@@ -130,22 +147,22 @@ const Shop = () => {
                             <h3 className="font-bold text-lg mt-6 mb-4">Gender</h3>
                             <div className="space-y-2">
                                 <label className="flex items-center">
-                                    <input type="radio" name="gender" value="all" checked={gender === 'all'} onChange={e => setGender(e.target.value)} className="form-radio text-red-500"/>
+                                    <input type="radio" name="gender" value="all" checked={gender === 'all'} onChange={handleGenderChange} className="form-radio text-red-500"/>
                                     <span className="ml-2 text-gray-600">All</span>
                                 </label>
                                 <label className="flex items-center">
-                                    <input type="radio" name="gender" value="women" checked={gender === 'women'} onChange={e => setGender(e.target.value)} className="form-radio text-red-500"/>
+                                    <input type="radio" name="gender" value="women" checked={gender === 'women'} onChange={handleGenderChange} className="form-radio text-red-500"/>
                                     <span className="ml-2 text-gray-600">Women</span>
                                 </label>
                                 <label className="flex items-center">
-                                    <input type="radio" name="gender" value="men" checked={gender === 'men'} onChange={e => setGender(e.target.value)} className="form-radio text-red-500"/>
+                                    <input type="radio" name="gender" value="men" checked={gender === 'men'} onChange={handleGenderChange} className="form-radio text-red-500"/>
                                     <span className="ml-2 text-gray-600">Men</span>
                                 </label>
                             </div>
                         </div>
                     </aside>
 
-                    <main className="lg:col-span-3">
+                    <main className="lg:col-span-3" ref={mainContentRef}>
                         <div className="flex justify-between items-center mb-6 bg-white p-4 rounded-lg shadow-sm">
                             <button onClick={() => setIsFilterOpen(!isFilterOpen)} className="lg:hidden flex items-center gap-2 p-2 border rounded-md">
                                 <FiFilter/> Filters
@@ -166,7 +183,8 @@ const Shop = () => {
                                 <p className="text-gray-600">Try adjusting your search or filter criteria</p>
                             </div>
                         ) : (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                            // --- MODIFIED: Changed grid-cols-1 to grid-cols-2 for a 2-column mobile default ---
+                            <div className="grid grid-cols-2 xl:grid-cols-3 gap-6">
                                 {filteredProducts.map(product => (
                                     <ProductCard key={product.id} product={product} />
                                 ))}

@@ -64,7 +64,6 @@ const ProductCard = ({ product }) => {
                         </div>
                     </Link>
 
-                    {/* --- MODIFIED: Discount Badge position moved even closer to the corner --- */}
                     {isSpecialOffer && (
                         <div className="absolute top-1 left-1 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full z-10">
                             {discountPercentage}% OFF
@@ -89,26 +88,27 @@ const ProductCard = ({ product }) => {
                     </div>
                 </div>
 
-                {/* --- TEXT CONTAINER --- */}
-                <div className="pt-4 px-1 flex flex-col flex-grow">
+                {/* --- TEXT CONTAINER (FIXED) --- */}
+                <div className="pt-3 px-1 flex flex-col flex-grow">
                     <div className="flex justify-between items-start gap-2">
-                        <h3 className="flex-1 text-sm font-bold text-gray-900 uppercase pr-2 line-clamp-2 min-h-[2.5rem]">
+                        <h3 className="flex-1 text-sm font-bold text-gray-900 uppercase pr-2 line-clamp-2">
                             <Link to={`/product/${product.id}`} className="hover:text-gray-600 transition-colors">{product.name}</Link>
                         </h3>
-                        {/* --- MOBILE ICONS --- */}
+                        {/* Mobile Icons */}
                         <div className="flex items-center gap-3 lg:hidden">
                             <button onClick={(e) => handleIconClick(e, 'Wishlist')} className="flex-shrink-0 text-gray-800"><FiHeart size={20} className={`${isInWishlist ? 'text-red-500 fill-current' : ''}`} /></button>
                             <button onClick={handleAddToCart} className="flex-shrink-0 text-gray-800"><FiShoppingBag size={20} /></button>
                             <button onClick={(e) => {e.preventDefault(); setIsMenuOpen(!isMenuOpen);}} className="flex-shrink-0 text-gray-800 relative z-30"><FiMoreVertical size={20} /></button>
                         </div>
-                        {/* --- DESKTOP WISHLIST ICON --- */}
+                        {/* Desktop Wishlist Icon */}
                         <button onClick={(e) => handleIconClick(e, 'Wishlist')} className="hidden lg:block flex-shrink-0 text-gray-800">
                             {isInWishlist ? <FaHeart size={20} className="text-red-500" /> : <FiHeart size={20} />}
                         </button>
                     </div>
-                    {/* Info Block */}
-                    <div className="flex-grow">
-                        <p className="text-xs text-gray-500 mt-1">{product.category}</p>
+
+                    {/* Category and Price Info Block */}
+                    <div className="mt-1">
+                        <p className="text-xs text-gray-500">{product.category}</p>
                         <div className="flex items-baseline gap-2 flex-wrap">
                             <div className="flex items-baseline">
                                 <span className="text-xs font-medium text-gray-800 mr-0.5">Rs</span>
@@ -129,7 +129,7 @@ const ProductCard = ({ product }) => {
                     </div>
                 </div>
 
-                {/* --- MOBILE OPTIONS DROPDOWN --- */}
+                {/* Mobile Options Dropdown */}
                 {isMenuOpen && (
                     <>
                         <div onClick={() => setIsMenuOpen(false)} className="fixed inset-0 z-20 lg:hidden"></div>

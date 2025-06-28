@@ -1,4 +1,3 @@
-// src/components/common/Footer.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaFacebookF, FaTwitter, FaInstagram, FaPinterestP } from 'react-icons/fa';
@@ -11,7 +10,12 @@ const Footer = () => {
                     {/* Column 1: About */}
                     <div className="space-y-4">
                         <Link to="/">
-                            <img src="/images/logo-white.png" alt="Zolmo" className="h-10 w-auto" />
+                            {/* --- FIX IS HERE: Added 'filter invert' to make the logo visible --- */}
+                            <img 
+                                src="/images/logop.png" 
+                                alt="fashionmelawear" 
+                                className="h-20 w-auto filter invert" 
+                            />
                         </Link>
                         <p>Got Question? Call us 24/7</p>
                         <p className="text-2xl font-bold text-white">0341 9169022</p>

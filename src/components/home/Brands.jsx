@@ -13,8 +13,7 @@ const brands = [
 
 const Brands = () => {
     return (
-        // ADDED a unique ID: id="brands-section"
-        // REMOVED my incorrect "bg-force-white" class
+        // --- FIX IS HERE: Added a top border that works in both light and dark mode ---
         <div id="brands-section" className="bg-white py-16 border-t border-gray-100">
             <div className="container mx-auto px-4">
                 <h2 className="text-3xl font-bold text-gray-800 text-center mb-12">Top Brands</h2>

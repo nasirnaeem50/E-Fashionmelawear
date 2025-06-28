@@ -26,10 +26,12 @@ const DownloadApp = () => {
                     </form>
                     <div className="flex justify-center space-x-4">
                         <a href="#" className="hover:opacity-90 transition-opacity">
-                            <img src="/images/app1.png" alt="Download on the App Store" className="h-12"/>
+                            {/* Added rounded-lg class here */}
+                            <img src="/images/app1.png" alt="Download on the App Store" className="h-12 rounded-lg"/>
                         </a>
                         <a href="#" className="hover:opacity-90 transition-opacity">
-                            <img src="/images/google.webp" alt="Get it on Google Play" className="h-12"/>
+                            {/* Added rounded-lg class here */}
+                            <img src="/images/google.webp" alt="Get it on Google Play" className="h-12 rounded-lg"/>
                         </a>
                     </div>
                 </div>

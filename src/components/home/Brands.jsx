@@ -1,43 +1,21 @@
 import React from 'react';
 
 const brands = [
-    { 
-        name: 'Khaadi', 
-        logo: '/brands/Khaadi.png'
-    },
-    { 
-        name: 'Gul Ahmed', 
-        logo: '/brands/gul1.png'
-    },
-    { 
-        name: 'Sapphire', 
-        logo: '/brands/sapir.png'
-    },
-    { 
-        name: 'J.', 
-        logo: '/brands/j.jpg'
-    },
-    { 
-        name: 'Alkaram Studio', 
-        logo: '/brands/alkaram.png'
-    },
-    { 
-        name: 'Nishat Linen', 
-        logo: '/brands/nishat1.png'
-    },
-    { 
-        name: 'Bonanza Satrangi', 
-        logo: '/brands/bonza.webp'
-    },
-    { 
-        name: 'Sana Safinaz', 
-        logo: '/brands/sana.png'
-    },
+    { name: 'Khaadi', logo: '/brands/Khaadi.png' },
+    { name: 'Gul Ahmed', logo: '/brands/gul1.png' },
+    { name: 'Sapphire', logo: '/brands/sapir.png' },
+    { name: 'J.', logo: '/brands/j.jpg' },
+    { name: 'Alkaram Studio', logo: '/brands/alkaram.png' },
+    { name: 'Nishat Linen', logo: '/brands/nishat1.png' },
+    { name: 'Bonanza Satrangi', logo: '/brands/bonza.webp' },
+    { name: 'Sana Safinaz', logo: '/brands/sana.png' },
 ];
 
 const Brands = () => {
     return (
-        <div className="bg-white py-16 border-t border-gray-100">
+        // ADDED a unique ID: id="brands-section"
+        // REMOVED my incorrect "bg-force-white" class
+        <div id="brands-section" className="bg-white py-16 border-t border-gray-100">
             <div className="container mx-auto px-4">
                 <h2 className="text-3xl font-bold text-gray-800 text-center mb-12">Top Brands</h2>
                 <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-6 items-center">

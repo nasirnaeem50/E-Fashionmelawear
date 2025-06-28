@@ -1,1 +1,137 @@
+/*
+  ==========================================
+  PART 1: DEFINE THEME VARIABLES
+  ==========================================
+*/
+@layer base {
+  /* --- Light Theme Variables (Default) --- */
+  :root {
+    --background: #ffffff;
+    --foreground: #111827;
+    --card: #ffffff;
+    --card-foreground: #111827;
+    --muted: #f3f4f6;
+    --muted-foreground: #6b7280;
+    --border: #e5e7eb;
+    --input-bg: #ffffff;
+    --header-nav-bg: #2d2d2d;
+    --mobile-menu-bg: #2d2d2d;
+    --mobile-input-bg: #4b5563;
+  }
+
+  /* --- Dark Theme Variables --- */
+  .dark {
+    --background: #111827;
+    --foreground: #ffffff;
+    --card: #1f2937;
+    --card-foreground: #ffffff;
+    --muted: #374151;
+    --muted-foreground: #9ca3af;
+    --border: #374151;
+    --input-bg: #374151;
+    --header-nav-bg: #1f2937;
+    --mobile-menu-bg: #1f2937;
+    --mobile-input-bg: #4b5563;
+  }
+
+  /* --- Global Styles Application --- */
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    transition-property: color, background-color;
+    transition-duration: 300ms;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/*
+  ==========================================
+  PART 2: IMPORT TAILWIND STYLES
+  ==========================================
+*/
 @import "tailwindcss";
+
+/*
+  ==========================================
+  PART 3: THEME OVERRIDES
+  ==========================================
+*/
+
+/* Main container fix for popovers, cards, etc. */
+.dark .bg-white:not(#brands-section *) {
+  background-color: var(--card);
+  color: var(--card-foreground);
+}
+
+/* Other Backgrounds */
+.dark .bg-gray-100 { background-color: var(--muted); }
+
+/* Text Color Overrides */
+.dark .text-gray-500,
+.dark .text-gray-600,
+.dark .text-gray-700,
+.dark .text-gray-800,
+.dark .text-gray-900,
+.dark .text-black { color: var(--foreground); }
+
+/* Border Colors */
+.dark .border,
+.dark .border-gray-200,
+.dark .border-gray-300 { border-color: var(--border); }
+.dark .divide-y > :not([hidden]) ~ :not([hidden]),
+.dark .divide-gray-200 > :not([hidden]) ~ :not([hidden]) { border-color: var(--border); }
+
+/* SCOPED Form Element Overrides (leaves Header search bar alone) */
+.dark main input[type="text"],
+.dark main select {
+  background-color: var(--input-bg);
+  border-color: var(--border);
+  color: var(--foreground);
+}
+.dark main ::placeholder {
+  color: var(--muted-foreground);
+}
+
+/* Header Logo Fix (inverts the image colors) */
+.dark img[alt="Zolmo"] {
+  filter: invert(1);
+}
+
+/* Other Specific Component Overrides */
+.dark [class*="bg-[#2d2d2d]"] { background-color: var(--header-nav-bg); }
+.dark .bg-gray-700 { background-color: var(--mobile-input-bg); }
+.dark [class*="hover:bg-gray-100"]:hover { background-color: var(--muted); }
+.dark [class*="hover:bg-gray-700"]:hover { background-color: #374151; }
+
+
+/*
+  ==================================================================
+  BRANDS SECTION EXCEPTION BLOCK
+  This block targets the entire Brands component using its ID and
+  resets all its children back to their light-mode appearance.
+  ==================================================================
+*/
+.dark #brands-section {
+  background-color: #ffffff !important;
+  border-color: #f3f4f6 !important;
+}
+
+.dark #brands-section .text-gray-800,
+.dark #brands-section .text-gray-600 {
+  color: #1f2937 !important;
+}
+
+.dark #brands-section .bg-white {
+  background-color: #ffffff !important;
+}
+
+.dark #brands-section .border-gray-200,
+.dark #brands-section .border-gray-300 {
+  border-color: #e5e7eb !important;
+}
+
+/* Ensure brand logos are NOT inverted */
+.dark #brands-section img {
+  filter: invert(0) !important;
+}

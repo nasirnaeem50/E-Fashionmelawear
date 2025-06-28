@@ -22,18 +22,19 @@ const Shop = () => {
         const urlSearch = queryParams.get('search');
         const urlFilter = queryParams.get('filter');
 
-        if (urlCategory) {
-            setSelectedCategories([urlCategory]);
-        } else {
-            setSelectedCategories([]);
-        }
-
         if (urlSearch) {
             setSearchQuery(urlSearch);
+            setSelectedCategories([]);
+            setGender('all');
         } else {
             setSearchQuery('');
+            if (urlCategory) {
+                setSelectedCategories([urlCategory]);
+            } else {
+                setSelectedCategories([]);
+            }
         }
-
+        
         if (urlFilter) {
             setActiveFilter(urlFilter);
         } else {
@@ -60,11 +61,27 @@ const Shop = () => {
         // Apply search filter
         if (searchQuery) {
             const query = searchQuery.toLowerCase();
-            tempProducts = tempProducts.filter(p => 
-                p.name.toLowerCase().includes(query) || 
-                p.description.toLowerCase().includes(query) ||
-                p.category.toLowerCase().includes(query)
-            );
+            // --- REWRITTEN SEARCH LOGIC FOR GENDER ---
+            tempProducts = tempProducts.filter(p => {
+                const productGender = p.gender.toLowerCase();
+                
+                // Check name, description, category as before
+                if (p.name.toLowerCase().includes(query) || 
+                    p.description?.toLowerCase().includes(query) ||
+                    p.category.toLowerCase().includes(query)) {
+                    return true;
+                }
+
+                // Add a specific, smarter check for gender
+                if ((query === 'man' || query === 'men') && productGender === 'men') {
+                    return true;
+                }
+                if ((query === 'woman' || query === 'women') && productGender === 'women') {
+                    return true;
+                }
+                
+                return false;
+            });
         }
 
         // Apply gender filter
@@ -149,52 +166,51 @@ const Shop = () => {
                                 <label className="flex items-center">
                                     <input type="radio" name="gender" value="all" checked={gender === 'all'} onChange={handleGenderChange} className="form-radio text-red-500"/>
                                     <span className="ml-2 text-gray-600">All</span>
-                                </label>
-                                <label className="flex items-center">
-                                    <input type="radio" name="gender" value="women" checked={gender === 'women'} onChange={handleGenderChange} className="form-radio text-red-500"/>
-                                    <span className="ml-2 text-gray-600">Women</span>
-                                </label>
-                                <label className="flex items-center">
-                                    <input type="radio" name="gender" value="men" checked={gender === 'men'} onChange={handleGenderChange} className="form-radio text-red-500"/>
-                                    <span className="ml-2 text-gray-600">Men</span>
-                                </label>
-                            </div>
-                        </div>
-                    </aside>
+                                 </label>
+                                 <label className="flex items-center">
+                                     <input type="radio" name="gender" value="women" checked={gender === 'women'} onChange={handleGenderChange} className="form-radio text-red-500"/>
+                                     <span className="ml-2 text-gray-600">Women</span>
+                                 </label>
+                                 <label className="flex items-center">
+                                     <input type="radio" name="gender" value="men" checked={gender === 'men'} onChange={handleGenderChange} className="form-radio text-red-500"/>
+                                     <span className="ml-2 text-gray-600">Men</span>
+                                 </label>
+                             </div>
+                         </div>
+                     </aside>
 
-                    <main className="lg:col-span-3" ref={mainContentRef}>
-                        <div className="flex justify-between items-center mb-6 bg-white p-4 rounded-lg shadow-sm">
-                            <button onClick={() => setIsFilterOpen(!isFilterOpen)} className="lg:hidden flex items-center gap-2 p-2 border rounded-md">
-                                <FiFilter/> Filters
-                            </button>
-                            <p className="text-gray-600 hidden sm:block">{filteredProducts.length} products found</p>
-                            <div>
-                                <select value={sortBy} onChange={e => setSortBy(e.target.value)} className="border-gray-300 rounded-md shadow-sm focus:border-red-300 focus:ring focus:ring-red-200 focus:ring-opacity-50">
-                                    <option value="default">Default Sorting</option>
-                                    <option value="latest">Sort by Latest</option>
-                                    <option value="price-asc">Sort by Price: Low to High</option>
-                                    <option value="price-desc">Sort by Price: High to Low</option>
-                                </select>
-                            </div>
-                        </div>
-                        {filteredProducts.length === 0 ? (
-                            <div className="bg-white p-8 rounded-lg shadow-sm text-center">
-                                <h3 className="text-xl font-semibold text-gray-800 mb-2">No products found</h3>
-                                <p className="text-gray-600">Try adjusting your search or filter criteria</p>
-                            </div>
-                        ) : (
-                            // --- MODIFIED: Changed grid-cols-1 to grid-cols-2 for a 2-column mobile default ---
-                            <div className="grid grid-cols-2 xl:grid-cols-3 gap-6">
-                                {filteredProducts.map(product => (
-                                    <ProductCard key={product.id} product={product} />
-                                ))}
-                            </div>
-                        )}
-                    </main>
-                </div>
-            </div>
-        </PageTransition>
-    );
-};
+                     <main className="lg:col-span-3" ref={mainContentRef}>
+                         <div className="flex justify-between items-center mb-6 bg-white p-4 rounded-lg shadow-sm">
+                             <button onClick={() => setIsFilterOpen(!isFilterOpen)} className="lg:hidden flex items-center gap-2 p-2 border rounded-md">
+                                 <FiFilter/> Filters
+                             </button>
+                             <p className="text-gray-600 hidden sm:block">{filteredProducts.length} products found</p>
+                             <div>
+                                 <select value={sortBy} onChange={e => setSortBy(e.target.value)} className="border-gray-300 rounded-md shadow-sm focus:border-red-300 focus:ring focus:ring-red-200 focus:ring-opacity-50">
+                                     <option value="default">Default Sorting</option>
+                                     <option value="latest">Sort by Latest</option>
+                                     <option value="price-asc">Sort by Price: Low to High</option>
+                                     <option value="price-desc">Sort by Price: High to Low</option>
+                                 </select>
+                             </div>
+                         </div>
+                         {filteredProducts.length === 0 ? (
+                             <div className="bg-white p-8 rounded-lg shadow-sm text-center">
+                                 <h3 className="text-xl font-semibold text-gray-800 mb-2">No products found</h3>
+                                 <p className="text-gray-600">Try adjusting your search or filter criteria</p>
+                             </div>
+                         ) : (
+                             <div className="grid grid-cols-2 xl:grid-cols-3 gap-6">
+                                 {filteredProducts.map(product => (
+                                     <ProductCard key={product.id} product={product} />
+                                 ))}
+                             </div>
+                         )}
+                     </main>
+                 </div>
+             </div>
+         </PageTransition>
+     );
+ };
 
-export default Shop;
+ export default Shop;

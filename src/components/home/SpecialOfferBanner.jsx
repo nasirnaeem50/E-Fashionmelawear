@@ -4,11 +4,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FaBolt } from "react-icons/fa";
 import { specialOffers } from "../../data/mockData";
 
-// This function is now outside the component for clarity
+// --- FIX: Define the target date ONCE outside the component ---
+// This creates a fixed target date 3 days in the future from the moment the component loads.
+const targetDate = new Date();
+targetDate.setDate(targetDate.getDate() + 3);
+
+// This function now calculates the difference from the fixed target date.
 function calculateTimeLeft() {
-  const year = new Date().getFullYear();
-  // Using reliable ISO date format (YYYY-MM-DD) to prevent browser inconsistencies
-  const targetDate = new Date(`${year}-12-31T23:59:59`);
+  // The target date is now fixed and won't be recalculated every second.
   const difference = +targetDate - +new Date();
   
   let timeLeft = {};

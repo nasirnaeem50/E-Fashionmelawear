@@ -168,6 +168,18 @@ export const products = [
         reviewCount: 25,
         image: "/images/c10.webp",
         description: "Elegant black cotton shalwar kameez for men. Premium fabric with a comfortable fit for any occasion."
+    },
+     {
+        id: 14,
+        name: "Summer Suit",
+        category: "Summer Collection",
+        gender: "Women",
+        price: 6000,
+        originalPrice: 6300,
+        rating: 4.8,
+        reviewCount: 25,
+        image: "/images/w3.jpg",
+        description: "Elegant black Summer suit. Premium fabric with a comfortable fit for any occasion."
     }
 ];
 

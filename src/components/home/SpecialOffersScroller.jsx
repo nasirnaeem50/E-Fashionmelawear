@@ -7,10 +7,11 @@ export const SpecialOffersScroller = ({ specialOffers }) => {
   const scrollContainerRef = useRef(null);
   const [currentColumn, setCurrentColumn] = useState(0);
 
-  // Group into columns of 7 items each
+  // --- THIS IS THE FIX ---
+  // Group into columns of 8 items each instead of 7
   const columns = [];
-  for (let i = 0; i < specialOffers.length; i += 7) {
-    columns.push(specialOffers.slice(i, i + 7));
+  for (let i = 0; i < specialOffers.length; i += 8) {
+    columns.push(specialOffers.slice(i, i + 8));
   }
 
   const scrollToColumn = (direction) => {

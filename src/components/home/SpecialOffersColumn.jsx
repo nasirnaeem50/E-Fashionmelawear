@@ -43,9 +43,12 @@ const SpecialOfferItem = ({ offer, index }) => (
 export const SpecialOffersColumn = ({ offers, columnIndex }) => (
   <div 
     className="flex flex-col space-y-3 w-full px-2"
-    style={{ height: '32rem' }} // Fixed height for exactly 6 items (6 * 5rem + spacing)
+    // --- THIS IS THE FIX ---
+    // Recalculated height for 8 items (8 * 5rem item + 7 * 0.75rem gap = 45.25rem)
+    style={{ height: '45.25rem' }}
   >
-    {offers.slice(0, 6).map((offer, index) => ( // Only take first 6 items
+    {/* Changed slice from 7 to 8 to show eight items per column */}
+    {offers.slice(0, 8).map((offer, index) => (
       <SpecialOfferItem 
         key={`${offer.id}-${columnIndex}-${index}`} 
         offer={offer} 
